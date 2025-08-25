@@ -173,22 +173,43 @@ const ExportData = () => {
       // Add trader files to zip
       for (const trader of traders) {
         // Add certificate file if exists
-        const certFile = localStorage.getItem(`file_${trader.id}_certificate`);
-        if (certFile && trader.certificateFile) {
-          // Create a placeholder file (in real app, this would be the actual file data)
-          filesFolder.file(
-            `${trader.id}_certificate_${trader.certificateFile}`,
-            `Certificate file for ${trader.name} (Trader ID: ${trader.traderId})\n\nThis is a placeholder file. In a real application, this would contain the actual uploaded certificate data.`
-          );
+        const certFileData = localStorage.getItem(`file_${trader.id}_certificate`);
+        if (certFileData && trader.certificateFile) {
+          try {
+            const fileInfo = JSON.parse(certFileData);
+            if (fileInfo.content) {
+              // Convert base64 data URL to binary data
+              const base64Data = fileInfo.content.split(',')[1];
+              const binaryData = atob(base64Data);
+              const bytes = new Uint8Array(binaryData.length);
+              for (let i = 0; i < binaryData.length; i++) {
+                bytes[i] = binaryData.charCodeAt(i);
+              }
+              filesFolder.file(`${trader.id}_certificate_${fileInfo.name}`, bytes);
+            }
+          } catch (error) {
+            console.error('Error processing certificate file:', error);
+          }
         }
-        
+
         // Add indent file if exists
-        const indentFile = localStorage.getItem(`file_${trader.id}_indent`);
-        if (indentFile && trader.indentFile) {
-          filesFolder.file(
-            `${trader.id}_indent_${trader.indentFile}`,
-            `Indent file for ${trader.name} (Trader ID: ${trader.traderId})\n\nThis is a placeholder file. In a real application, this would contain the actual uploaded indent data.`
-          );
+        const indentFileData = localStorage.getItem(`file_${trader.id}_indent`);
+        if (indentFileData && trader.indentFile) {
+          try {
+            const fileInfo = JSON.parse(indentFileData);
+            if (fileInfo.content) {
+              // Convert base64 data URL to binary data
+              const base64Data = fileInfo.content.split(',')[1];
+              const binaryData = atob(base64Data);
+              const bytes = new Uint8Array(binaryData.length);
+              for (let i = 0; i < binaryData.length; i++) {
+                bytes[i] = binaryData.charCodeAt(i);
+              }
+              filesFolder.file(`${trader.id}_indent_${fileInfo.name}`, bytes);
+            }
+          } catch (error) {
+            console.error('Error processing indent file:', error);
+          }
         }
       }
       

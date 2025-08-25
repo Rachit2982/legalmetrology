@@ -88,14 +88,20 @@ const authenticateToken = (req, res, next) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body
+    console.log('Login attempt:', { username, password: '***' })
 
     const user = users.find(u => u.username === username)
+    console.log('User found:', user ? 'yes' : 'no')
     if (!user) {
+      console.log('User not found for username:', username)
       return res.status(400).json({ message: 'Invalid credentials' })
     }
 
+    console.log('Comparing password with hash...')
     const validPassword = await bcrypt.compare(password, user.password)
+    console.log('Password valid:', validPassword)
     if (!validPassword) {
+      console.log('Password comparison failed')
       return res.status(400).json({ message: 'Invalid credentials' })
     }
 

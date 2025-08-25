@@ -25,14 +25,16 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
-    
+
     if (!username || !password) {
       setError('Please enter both username and password');
       return;
     }
 
     const success = login(username, password);
-    if (!success) {
+    if (success) {
+      navigate('/dashboard');
+    } else {
       setError('Invalid credentials. Use: admin / admin123');
     }
   };

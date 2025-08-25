@@ -312,7 +312,7 @@ const TraderTracking = () => {
               <TableBody>
                 {filteredTraders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} sx={{ textAlign: 'center', py: 4 }}>
+                    <TableCell colSpan={10} sx={{ textAlign: 'center', py: 4 }}>
                       <Typography variant="body1" color="text.secondary">
                         {traders.length === 0 ? 'No traders added yet.' : 'No traders match your search criteria.'}
                       </Typography>

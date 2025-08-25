@@ -361,13 +361,13 @@ const AddTrader = () => {
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>
                     Certificate
                   </Typography>
-                  {createDropzone('certificate', 'certificate')}
+                  <FileDropzone fileType="certificate" label="certificate" />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>
                     Indent
                   </Typography>
-                  {createDropzone('indent', 'indent')}
+                  <FileDropzone fileType="indent" label="indent" />
                 </Grid>
               </Grid>
 

@@ -321,6 +321,9 @@ const TraderTracking = () => {
                 ) : (
                   filteredTraders.map((trader) => {
                     const statusInfo = getStatusInfo(trader.reVerificationDate);
+                    const certificateFile = getFileInfo(trader.id, 'certificate');
+                    const indentFile = getFileInfo(trader.id, 'indent');
+
                     return (
                       <TableRow key={trader.id} hover>
                         <TableCell>{trader.traderId}</TableCell>
@@ -331,11 +334,51 @@ const TraderTracking = () => {
                         <TableCell>
                           {dayjs(trader.reVerificationDate).format('DD/MM/YYYY')}
                           <Typography variant="caption" display="block" color="text.secondary">
-                            {statusInfo.status === 'Expired' 
+                            {statusInfo.status === 'Expired'
                               ? `${statusInfo.days} days overdue`
                               : `${statusInfo.days} days remaining`
                             }
                           </Typography>
+                        </TableCell>
+                        <TableCell>
+                          {certificateFile ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <InsertDriveFile fontSize="small" color="success" />
+                              <Typography variant="caption" sx={{ display: 'block', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {certificateFile.name}
+                              </Typography>
+                              <IconButton size="small" onClick={() => viewFile(trader.id, 'certificate')} title="View file">
+                                <Visibility fontSize="small" />
+                              </IconButton>
+                              <IconButton size="small" onClick={() => downloadFile(trader.id, 'certificate')} title="Download file">
+                                <GetApp fontSize="small" />
+                              </IconButton>
+                            </Box>
+                          ) : (
+                            <Typography variant="caption" color="text.secondary">
+                              Not uploaded
+                            </Typography>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {indentFile ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <InsertDriveFile fontSize="small" color="success" />
+                              <Typography variant="caption" sx={{ display: 'block', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {indentFile.name}
+                              </Typography>
+                              <IconButton size="small" onClick={() => viewFile(trader.id, 'indent')} title="View file">
+                                <Visibility fontSize="small" />
+                              </IconButton>
+                              <IconButton size="small" onClick={() => downloadFile(trader.id, 'indent')} title="Download file">
+                                <GetApp fontSize="small" />
+                              </IconButton>
+                            </Box>
+                          ) : (
+                            <Typography variant="caption" color="text.secondary">
+                              Not uploaded
+                            </Typography>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Chip

@@ -175,7 +175,6 @@ const ExportData = () => {
         // Add certificate file if exists
         const certFile = localStorage.getItem(`file_${trader.id}_certificate`);
         if (certFile && trader.certificateFile) {
-          const certData = JSON.parse(certFile);
           // Create a placeholder file (in real app, this would be the actual file data)
           filesFolder.file(
             `${trader.id}_certificate_${trader.certificateFile}`,
@@ -186,7 +185,6 @@ const ExportData = () => {
         // Add indent file if exists
         const indentFile = localStorage.getItem(`file_${trader.id}_indent`);
         if (indentFile && trader.indentFile) {
-          const indentData = JSON.parse(indentFile);
           filesFolder.file(
             `${trader.id}_indent_${trader.indentFile}`,
             `Indent file for ${trader.name} (Trader ID: ${trader.traderId})\n\nThis is a placeholder file. In a real application, this would contain the actual uploaded indent data.`

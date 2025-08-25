@@ -79,12 +79,12 @@ const AddTrader = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess('');
-    
+
     if (!validateForm()) return;
-    
+
     try {
       // Get existing traders from localStorage
       const existingTraders = JSON.parse(localStorage.getItem('traders') || '[]');

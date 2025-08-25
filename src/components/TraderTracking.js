@@ -128,14 +128,82 @@ const TraderTracking = () => {
     if (deleteDialog.trader) {
       const updatedTraders = traders.filter(t => t.id !== deleteDialog.trader.id);
       localStorage.setItem('traders', JSON.stringify(updatedTraders));
-      
+
       // Remove associated files
       localStorage.removeItem(`file_${deleteDialog.trader.id}_certificate`);
       localStorage.removeItem(`file_${deleteDialog.trader.id}_indent`);
-      
+
       setTraders(updatedTraders);
     }
     setDeleteDialog({ open: false, trader: null });
+  };
+
+  const viewFile = (traderId, fileType) => {
+    const fileData = localStorage.getItem(`file_${traderId}_${fileType}`);
+    if (fileData) {
+      try {
+        const file = JSON.parse(fileData);
+        if (file.content) {
+          // Create a new window/tab to display the file
+          const newWindow = window.open();
+          if (newWindow) {
+            if (file.type === 'application/pdf') {
+              newWindow.document.write(`
+                <html>
+                  <head><title>${file.name}</title></head>
+                  <body style="margin:0;">
+                    <embed src="${file.content}" type="application/pdf" width="100%" height="100%">
+                  </body>
+                </html>
+              `);
+            } else {
+              newWindow.document.write(`
+                <html>
+                  <head><title>${file.name}</title></head>
+                  <body style="margin:0; text-align:center;">
+                    <img src="${file.content}" style="max-width:100%; max-height:100vh;">
+                  </body>
+                </html>
+              `);
+            }
+          }
+        }
+      } catch (error) {
+        alert('Error opening file');
+      }
+    }
+  };
+
+  const downloadFile = (traderId, fileType) => {
+    const fileData = localStorage.getItem(`file_${traderId}_${fileType}`);
+    if (fileData) {
+      try {
+        const file = JSON.parse(fileData);
+        if (file.content) {
+          const link = document.createElement('a');
+          link.href = file.content;
+          link.download = file.name;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      } catch (error) {
+        alert('Error downloading file');
+      }
+    }
+  };
+
+  const getFileInfo = (traderId, fileType) => {
+    const fileData = localStorage.getItem(`file_${traderId}_${fileType}`);
+    if (fileData) {
+      try {
+        const file = JSON.parse(fileData);
+        return file.content ? file : null;
+      } catch (error) {
+        return null;
+      }
+    }
+    return null;
   };
 
   const getUpcomingReminders = () => {

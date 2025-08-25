@@ -9,6 +9,7 @@ import {
   Paper
 } from '@mui/material';
 import { Visibility, VisibilityOff, Brightness4, Brightness7 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 

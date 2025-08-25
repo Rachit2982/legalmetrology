@@ -110,22 +110,35 @@ const AddTrader = () => {
       const updatedTraders = [...existingTraders, newTrader];
       localStorage.setItem('traders', JSON.stringify(updatedTraders));
       
-      // Save files to localStorage (in real app, these would be uploaded to server)
+      // Save files to localStorage with actual content (in real app, these would be uploaded to server)
+      const saveFile = (file, traderId, type) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const fileData = {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              content: e.target.result, // base64 content
+              uploadDate: new Date().toISOString()
+            };
+            localStorage.setItem(`file_${traderId}_${type}`, JSON.stringify(fileData));
+            resolve();
+          };
+          reader.readAsDataURL(file);
+        });
+      };
+
+      // Save files with content
+      const filePromises = [];
       if (files.certificate) {
-        localStorage.setItem(`file_${newTrader.id}_certificate`, JSON.stringify({
-          name: files.certificate.name,
-          type: files.certificate.type,
-          size: files.certificate.size
-        }));
+        filePromises.push(saveFile(files.certificate, newTrader.id, 'certificate'));
       }
-      
       if (files.indent) {
-        localStorage.setItem(`file_${newTrader.id}_indent`, JSON.stringify({
-          name: files.indent.name,
-          type: files.indent.type,
-          size: files.indent.size
-        }));
+        filePromises.push(saveFile(files.indent, newTrader.id, 'indent'));
       }
+
+      await Promise.all(filePromises);
       
       setSuccess('Trader added successfully!');
       

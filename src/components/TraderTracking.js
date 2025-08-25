@@ -128,11 +128,11 @@ const TraderTracking = () => {
     if (deleteDialog.trader) {
       const updatedTraders = traders.filter(t => t.id !== deleteDialog.trader.id);
       localStorage.setItem('traders', JSON.stringify(updatedTraders));
-
+      
       // Remove associated files
       localStorage.removeItem(`file_${deleteDialog.trader.id}_certificate`);
       localStorage.removeItem(`file_${deleteDialog.trader.id}_indent`);
-
+      
       setTraders(updatedTraders);
     }
     setDeleteDialog({ open: false, trader: null });
@@ -323,7 +323,7 @@ const TraderTracking = () => {
                     const statusInfo = getStatusInfo(trader.reVerificationDate);
                     const certificateFile = getFileInfo(trader.id, 'certificate');
                     const indentFile = getFileInfo(trader.id, 'indent');
-
+                    
                     return (
                       <TableRow key={trader.id} hover>
                         <TableCell>{trader.traderId}</TableCell>
@@ -334,7 +334,7 @@ const TraderTracking = () => {
                         <TableCell>
                           {dayjs(trader.reVerificationDate).format('DD/MM/YYYY')}
                           <Typography variant="caption" display="block" color="text.secondary">
-                            {statusInfo.status === 'Expired'
+                            {statusInfo.status === 'Expired' 
                               ? `${statusInfo.days} days overdue`
                               : `${statusInfo.days} days remaining`
                             }

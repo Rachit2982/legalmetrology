@@ -49,19 +49,31 @@ const ExportData = () => {
     
     savedTraders.forEach(trader => {
       // Check for certificate file
-      const certFile = localStorage.getItem(`file_${trader.id}_certificate`);
-      if (certFile) {
-        totalFiles++;
-        const certData = JSON.parse(certFile);
-        dataSize += certData.size || 0;
+      const certFileData = localStorage.getItem(`file_${trader.id}_certificate`);
+      if (certFileData) {
+        try {
+          const certData = JSON.parse(certFileData);
+          if (certData.content) {
+            totalFiles++;
+            dataSize += certData.size || 0;
+          }
+        } catch (error) {
+          console.error('Error parsing certificate file data:', error);
+        }
       }
-      
+
       // Check for indent file
-      const indentFile = localStorage.getItem(`file_${trader.id}_indent`);
-      if (indentFile) {
-        totalFiles++;
-        const indentData = JSON.parse(indentFile);
-        dataSize += indentData.size || 0;
+      const indentFileData = localStorage.getItem(`file_${trader.id}_indent`);
+      if (indentFileData) {
+        try {
+          const indentData = JSON.parse(indentFileData);
+          if (indentData.content) {
+            totalFiles++;
+            dataSize += indentData.size || 0;
+          }
+        } catch (error) {
+          console.error('Error parsing indent file data:', error);
+        }
       }
     });
     

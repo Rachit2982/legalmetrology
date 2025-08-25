@@ -17,6 +17,19 @@ app.use(cors())
 app.use(express.json())
 app.use('/uploads', express.static('uploads'))
 
+// Serve uploaded files with proper route
+app.get('/api/uploads/:filename', (req, res) => {
+  const filename = req.params.filename
+  const filePath = path.join(process.cwd(), 'uploads', filename)
+
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ message: 'File not found' })
+  }
+
+  res.sendFile(filePath)
+})
+
 // Ensure uploads directory exists
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads', { recursive: true })

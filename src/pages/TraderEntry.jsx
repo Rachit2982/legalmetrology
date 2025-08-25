@@ -128,7 +128,10 @@ const TraderEntry = () => {
 
           {success && (
             <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded-md">
-              {success}
+              <div className="flex items-center">
+                <Save className="h-4 w-4 mr-2" />
+                {success}
+              </div>
             </div>
           )}
 
@@ -271,8 +274,13 @@ const TraderEntry = () => {
                     accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                   />
                 </div>
+                {files.certificate && (
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                    Selected: {files.certificate.name}
+                  </p>
+                )}
               </div>
-              
+
               <div>
                 <label className="label-text">Indent</label>
                 <div className="relative">
@@ -285,6 +293,11 @@ const TraderEntry = () => {
                     accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                   />
                 </div>
+                {files.indent && (
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                    Selected: {files.indent.name}
+                  </p>
+                )}
               </div>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">

@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Responsive table styles */
+@media (max-width: 768px) {
+  .MuiTableContainer-root {
+    overflow-x: auto;
+  }
+  
+  .MuiTable-root {
+    min-width: 650px;
+  }
+}
+
+/* Improved card spacing on mobile */
+@media (max-width: 600px) {
+  .MuiCard-root {
+    margin: 8px 0;
+  }
+  
+  .MuiCardContent-root {
+    padding: 16px !important;
+  }
+}
+
+/* Better form layout on mobile */
+@media (max-width: 768px) {
+  .MuiGrid-container > .MuiGrid-item {
+    padding: 8px;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading {
+  animation: pulse 2s infinite;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .MuiAppBar-root,
+  .MuiDrawer-root {
+    display: none !important;
+  }
+  
+  .print-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+}

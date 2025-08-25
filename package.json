@@ -10,7 +10,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server/production.js",
-    "dev:local": "npm run dev"
+    "start:production": "NODE_ENV=production node start-production.js",
+    "dev:local": "npm run dev",
+    "deploy:build": "npm ci && npm run build"
   },
   "dependencies": {
     "react": "^18.2.0",

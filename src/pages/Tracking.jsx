@@ -199,7 +199,7 @@ const Tracking = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
           <div className="flex items-center">
             <AlertTriangle className="h-6 w-6 text-red-600" />
@@ -272,7 +272,7 @@ const Tracking = () => {
             <p className="text-gray-500 dark:text-gray-400">No traders found for the selected filter</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
             {filteredTraders.map((trader) => {
               const daysUntil = getDaysUntilReverification(trader.reverificationDate)
               let category = 'upcoming'

@@ -147,8 +147,9 @@ const AddTrader = () => {
     }
   };
 
-  const createDropzone = (fileType, label) => {
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  // Custom hook for dropzone functionality
+  const useFileDropzone = (fileType, label) => {
+    return useDropzone({
       accept: {
         'application/pdf': ['.pdf'],
         'image/*': ['.png', '.jpg', '.jpeg'],
@@ -165,6 +166,11 @@ const AddTrader = () => {
         }
       }
     });
+  };
+
+  // Component for dropzone
+  const FileDropzone = ({ fileType, label }) => {
+    const { getRootProps, getInputProps, isDragActive } = useFileDropzone(fileType, label);
 
     return (
       <Paper

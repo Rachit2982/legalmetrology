@@ -1,12 +1,75 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { CssBaseline } from '@mui/material';
+import { ThemeContextProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import DashboardLayout from './components/DashboardLayout';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import AddTrader from './components/AddTrader';
+import TraderTracking from './components/TraderTracking';
+import ExportData from './components/ExportData';
 
 function App() {
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Welcome to React!</h1>
-      <p>Your application is now running successfully.</p>
-      <p>Edit <code>src/App.js</code> and save to see changes.</p>
-    </div>
+    <ThemeContextProvider>
+      <CssBaseline />
+      <AuthProvider>
+        <Router>
+          <Routes>
+            {/* Public Route */}
+            <Route path="/login" element={<Login />} />
+            
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Dashboard />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/add-trader"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <AddTrader />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tracking"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <TraderTracking />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/export"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <ExportData />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Default redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </ThemeContextProvider>
   );
 }
 

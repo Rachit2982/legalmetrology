@@ -149,10 +149,37 @@ const AddTrader = () => {
   const handleFileChange = (fileType, event) => {
     const file = event.target.files[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/jpg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        setErrors(prev => ({
+          ...prev,
+          [fileType]: 'Please upload only PDF, DOC, DOCX, JPG, or PNG files'
+        }));
+        return;
+      }
+
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        setErrors(prev => ({
+          ...prev,
+          [fileType]: 'File size should not exceed 10MB'
+        }));
+        return;
+      }
+
       setFiles(prev => ({
         ...prev,
         [fileType]: file
       }));
+
+      // Clear any previous errors
+      if (errors[fileType]) {
+        setErrors(prev => ({
+          ...prev,
+          [fileType]: ''
+        }));
+      }
     }
   };
 

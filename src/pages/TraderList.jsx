@@ -287,6 +287,9 @@ const TraderList = () => {
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Files
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -343,6 +346,35 @@ const TraderList = () => {
                             {Math.abs(daysUntil)} days overdue
                           </div>
                         )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col space-y-1">
+                          {trader.certificateFile && (
+                            <a
+                              href={`/api/uploads/${trader.certificateFile}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 flex items-center"
+                            >
+                              <Download className="h-3 w-3 mr-1" />
+                              Certificate
+                            </a>
+                          )}
+                          {trader.indentFile && (
+                            <a
+                              href={`/api/uploads/${trader.indentFile}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 flex items-center"
+                            >
+                              <Download className="h-3 w-3 mr-1" />
+                              Indent
+                            </a>
+                          )}
+                          {!trader.certificateFile && !trader.indentFile && (
+                            <span className="text-xs text-gray-400">No files</span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">

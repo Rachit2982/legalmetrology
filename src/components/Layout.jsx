@@ -144,8 +144,8 @@ const Layout = () => {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
-          <div className="py-6">
+        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none h-0">
+          <div className="py-6 min-h-full">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
               <Outlet />
             </div>

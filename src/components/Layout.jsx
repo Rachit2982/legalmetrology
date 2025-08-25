@@ -107,7 +107,7 @@ const Layout = () => {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0">
         <div className="lg:hidden">
           <div className="flex items-center justify-between bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
             <button
@@ -128,7 +128,7 @@ const Layout = () => {
         </div>
 
         {/* Desktop header */}
-        <div className="hidden lg:flex lg:items-center lg:justify-between bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="hidden lg:flex lg:items-center lg:justify-between bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex-shrink-0">
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             {navigation.find(nav => nav.href === location.pathname)?.name || 'Legal Metrology System'}
           </h1>
@@ -144,8 +144,8 @@ const Layout = () => {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none h-0">
-          <div className="py-6 min-h-full">
+        <main className="flex-1 overflow-y-auto focus:outline-none">
+          <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
               <Outlet />
             </div>

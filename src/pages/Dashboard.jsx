@@ -166,7 +166,7 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {statCards.map((stat, index) => {
           const Icon = stat.icon
           const CardComponent = stat.link ? Link : 'div'
@@ -194,7 +194,7 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div>
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {quickActions.map((action, index) => {
             const Icon = action.icon
             const ActionComponent = action.link ? Link : 'button'
@@ -218,7 +218,7 @@ const Dashboard = () => {
       {/* Recent Activity or Tips */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">System Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           <div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Key Features</h3>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
@@ -236,6 +236,15 @@ const Dashboard = () => {
               <li>• 2-year subscription available</li>
               <li>• Automatic renewal reminders</li>
               <li>• Certificate and indent tracking</li>
+            </ul>
+          </div>
+          <div className="hidden xl:block">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Quick Tips</h3>
+            <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+              <li>• Use filters to find traders quickly</li>
+              <li>• Export data regularly for backup</li>
+              <li>• Monitor expiring certificates</li>
+              <li>• Update trader information as needed</li>
             </ul>
           </div>
         </div>

@@ -93,26 +93,56 @@ const ExportData = () => {
   };
 
   const createExcelFile = () => {
-    const excelData = traders.map((trader, index) => ({
-      'S.No': index + 1,
-      'Trader ID': trader.traderId,
-      'Challan Number': trader.challanNumber,
-      'Trader Name': trader.name,
-      'Fee Amount (₹)': trader.feeAmount,
-      'Subscription Period (Years)': trader.subscriptionPeriod,
-      'Fee Submission Date': dayjs(trader.feeSubmissionDate).format('DD/MM/YYYY'),
-      'Re-verification Date': dayjs(trader.reVerificationDate).format('DD/MM/YYYY'),
-      'Days Until Re-verification': dayjs(trader.reVerificationDate).diff(dayjs(), 'day'),
-      'Certificate File': trader.certificateFile ? `./files/${trader.id}_certificate_${trader.certificateFile}` : 'Not uploaded',
-      'Indent File': trader.indentFile ? `./files/${trader.id}_indent_${trader.indentFile}` : 'Not uploaded',
-      'Status': (() => {
-        const daysUntil = dayjs(trader.reVerificationDate).diff(dayjs(), 'day');
-        if (daysUntil < 0) return 'Expired';
-        if (daysUntil <= 30) return 'Expiring Soon';
-        return 'Active';
-      })(),
-      'Created Date': dayjs(trader.createdAt).format('DD/MM/YYYY HH:mm')
-    }));
+    const excelData = traders.map((trader, index) => {
+      // Get actual file names from stored data
+      let certificateFileName = 'Not uploaded';
+      let indentFileName = 'Not uploaded';
+
+      const certFileData = localStorage.getItem(`file_${trader.id}_certificate`);
+      if (certFileData) {
+        try {
+          const certData = JSON.parse(certFileData);
+          if (certData.content && certData.name) {
+            certificateFileName = `./files/${trader.id}_certificate_${certData.name}`;
+          }
+        } catch (error) {
+          console.error('Error parsing certificate file data:', error);
+        }
+      }
+
+      const indentFileData = localStorage.getItem(`file_${trader.id}_indent`);
+      if (indentFileData) {
+        try {
+          const indentData = JSON.parse(indentFileData);
+          if (indentData.content && indentData.name) {
+            indentFileName = `./files/${trader.id}_indent_${indentData.name}`;
+          }
+        } catch (error) {
+          console.error('Error parsing indent file data:', error);
+        }
+      }
+
+      return {
+        'S.No': index + 1,
+        'Trader ID': trader.traderId,
+        'Challan Number': trader.challanNumber,
+        'Trader Name': trader.name,
+        'Fee Amount (₹)': trader.feeAmount,
+        'Subscription Period (Years)': trader.subscriptionPeriod,
+        'Fee Submission Date': dayjs(trader.feeSubmissionDate).format('DD/MM/YYYY'),
+        'Re-verification Date': dayjs(trader.reVerificationDate).format('DD/MM/YYYY'),
+        'Days Until Re-verification': dayjs(trader.reVerificationDate).diff(dayjs(), 'day'),
+        'Certificate File': certificateFileName,
+        'Indent File': indentFileName,
+        'Status': (() => {
+          const daysUntil = dayjs(trader.reVerificationDate).diff(dayjs(), 'day');
+          if (daysUntil < 0) return 'Expired';
+          if (daysUntil <= 30) return 'Expiring Soon';
+          return 'Active';
+        })(),
+        'Created Date': dayjs(trader.createdAt).format('DD/MM/YYYY HH:mm')
+      };
+    });
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     

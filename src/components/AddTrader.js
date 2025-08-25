@@ -17,7 +17,6 @@ import {
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Upload, Delete, FilePresent } from '@mui/icons-material';
-import { useDropzone } from 'react-dropzone';
 import dayjs from 'dayjs';
 
 const AddTrader = () => {
@@ -147,81 +146,83 @@ const AddTrader = () => {
     }
   };
 
-  // Custom hook for dropzone functionality
-  const useFileDropzone = (fileType, label) => {
-    return useDropzone({
-      accept: {
-        'application/pdf': ['.pdf'],
-        'image/*': ['.png', '.jpg', '.jpeg'],
-        'application/msword': ['.doc'],
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
-      },
-      maxFiles: 1,
-      onDrop: (acceptedFiles) => {
-        if (acceptedFiles.length > 0) {
-          setFiles(prev => ({
-            ...prev,
-            [fileType]: acceptedFiles[0]
-          }));
+  const handleFileChange = (fileType, event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFiles(prev => ({
+        ...prev,
+        [fileType]: file
+      }));
+    }
+  };
+
+  const removeFile = (fileType) => {
+    setFiles(prev => ({
+      ...prev,
+      [fileType]: null
+    }));
+  };
+
+  const FileUploadBox = ({ fileType, label }) => (
+    <Paper
+      sx={{
+        p: 3,
+        border: '2px dashed',
+        borderColor: 'grey.300',
+        textAlign: 'center',
+        transition: 'all 0.2s ease',
+        '&:hover': {
+          borderColor: 'primary.main',
+          bgcolor: 'primary.light'
         }
-      }
-    });
-  };
-
-  // Component for dropzone
-  const FileDropzone = ({ fileType, label }) => {
-    const { getRootProps, getInputProps, isDragActive } = useFileDropzone(fileType, label);
-
-    return (
-      <Paper
-        {...getRootProps()}
-        sx={{
-          p: 3,
-          border: '2px dashed',
-          borderColor: isDragActive ? 'primary.main' : 'grey.300',
-          bgcolor: isDragActive ? 'primary.light' : 'background.paper',
-          cursor: 'pointer',
-          textAlign: 'center',
-          transition: 'all 0.2s ease'
-        }}
-      >
-        <input {...getInputProps()} />
-        {files[fileType] ? (
-          <Box>
-            <FilePresent sx={{ fontSize: 48, color: 'success.main', mb: 1 }} />
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              {files[fileType].name}
-            </Typography>
-            <Chip
-              label={`${(files[fileType].size / 1024).toFixed(1)} KB`}
-              size="small"
-              color="success"
-            />
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                setFiles(prev => ({ ...prev, [fileType]: null }));
-              }}
-              sx={{ ml: 1 }}
-            >
-              <Delete />
-            </IconButton>
-          </Box>
-        ) : (
-          <Box>
-            <Upload sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              {isDragActive ? `Drop ${label} here` : `Click or drag ${label} here`}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Supports: PDF, DOC, DOCX, JPG, PNG
-            </Typography>
-          </Box>
-        )}
-      </Paper>
-    );
-  };
+      }}
+    >
+      {files[fileType] ? (
+        <Box>
+          <FilePresent sx={{ fontSize: 48, color: 'success.main', mb: 1 }} />
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            {files[fileType].name}
+          </Typography>
+          <Chip
+            label={`${(files[fileType].size / 1024).toFixed(1)} KB`}
+            size="small"
+            color="success"
+          />
+          <IconButton
+            size="small"
+            onClick={() => removeFile(fileType)}
+            sx={{ ml: 1 }}
+          >
+            <Delete />
+          </IconButton>
+        </Box>
+      ) : (
+        <Box>
+          <Upload sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            Click to upload {label}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Supports: PDF, DOC, DOCX, JPG, PNG
+          </Typography>
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            onChange={(e) => handleFileChange(fileType, e)}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0,
+              cursor: 'pointer'
+            }}
+          />
+        </Box>
+      )}
+    </Paper>
+  );
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -361,13 +362,17 @@ const AddTrader = () => {
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>
                     Certificate
                   </Typography>
-                  <FileDropzone fileType="certificate" label="certificate" />
+                  <Box sx={{ position: 'relative' }}>
+                    <FileUploadBox fileType="certificate" label="certificate" />
+                  </Box>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Typography variant="subtitle1" sx={{ mb: 2 }}>
                     Indent
                   </Typography>
-                  <FileDropzone fileType="indent" label="indent" />
+                  <Box sx={{ position: 'relative' }}>
+                    <FileUploadBox fileType="indent" label="indent" />
+                  </Box>
                 </Grid>
               </Grid>
 

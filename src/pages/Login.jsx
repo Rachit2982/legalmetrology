@@ -147,13 +147,6 @@ const Login = () => {
             </button>
           </div>
 
-          <div className="text-center">
-            <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-              <p className="font-medium mb-1">Demo Credentials:</p>
-              <p>Username: <span className="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">admin</span></p>
-              <p>Password: <span className="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">admin123</span></p>
-            </div>
-          </div>
         </form>
       </div>
     </div>

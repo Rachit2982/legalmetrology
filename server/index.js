@@ -54,12 +54,12 @@ const upload = multer({
 
 // In-memory storage for demo (replace with database in production)
 let traders = []
-// Generate password hash: bcrypt.hashSync('admin123', 12)
+// User credentials (hashed for security)
 let users = [
   {
     id: 1,
-    username: 'admin',
-    password: '$2a$12$OqhXVWNJr3TJGUGbOBh1mea.2jqLAFoI1OqGe.7ePwrmxJQeXyPgG', // password: admin123
+    username: 'UPSWP240434261',
+    password: '$2a$12$rQOmFZcm6S.Qz8nxEp8lX.JKJwq3L1MEWZ2HZ4K5VRG8wJxQfr9lW', // Secure hash
     role: 'admin'
   }
 ]
@@ -103,7 +103,7 @@ app.post('/api/auth/login', async (req, res) => {
     console.log('Password valid:', validPassword)
 
     // Fallback for demo - direct comparison if bcrypt fails
-    if (!validPassword && username === 'admin' && password === 'admin123') {
+    if (!validPassword && username === 'UPSWP240434261' && password === 'Atul@135') {
       console.log('Using demo fallback authentication')
       validPassword = true
     }

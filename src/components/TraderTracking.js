@@ -303,6 +303,8 @@ const TraderTracking = () => {
                   <TableCell><strong>Fee Amount</strong></TableCell>
                   <TableCell><strong>Subscription</strong></TableCell>
                   <TableCell><strong>Re-verification Date</strong></TableCell>
+                  <TableCell><strong>Certificate</strong></TableCell>
+                  <TableCell><strong>Indent</strong></TableCell>
                   <TableCell><strong>Status</strong></TableCell>
                   <TableCell><strong>Actions</strong></TableCell>
                 </TableRow>

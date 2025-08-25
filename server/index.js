@@ -54,11 +54,12 @@ const upload = multer({
 
 // In-memory storage for demo (replace with database in production)
 let traders = []
+// Generate password hash: bcrypt.hashSync('admin123', 12)
 let users = [
   {
     id: 1,
     username: 'admin',
-    password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LwdeMt8xaUTlrM8VW', // password: admin123
+    password: '$2a$12$OqhXVWNJr3TJGUGbOBh1mea.2jqLAFoI1OqGe.7ePwrmxJQeXyPgG', // password: admin123
     role: 'admin'
   }
 ]

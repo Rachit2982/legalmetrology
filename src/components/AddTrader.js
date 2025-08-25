@@ -204,19 +204,20 @@ const AddTrader = () => {
   };
 
   const FileUploadBox = ({ fileType, label }) => (
-    <Paper
-      sx={{
-        p: 3,
-        border: '2px dashed',
-        borderColor: 'grey.300',
-        textAlign: 'center',
-        transition: 'all 0.2s ease',
-        '&:hover': {
-          borderColor: 'primary.main',
-          bgcolor: 'primary.light'
-        }
-      }}
-    >
+    <Box>
+      <Paper
+        sx={{
+          p: 3,
+          border: '2px dashed',
+          borderColor: errors[fileType] ? 'error.main' : 'grey.300',
+          textAlign: 'center',
+          transition: 'all 0.2s ease',
+          '&:hover': {
+            borderColor: errors[fileType] ? 'error.main' : 'primary.main',
+            bgcolor: errors[fileType] ? 'error.light' : 'primary.light'
+          }
+        }}
+      >
       {files[fileType] ? (
         <Box>
           <FilePresent sx={{ fontSize: 48, color: 'success.main', mb: 1 }} />
@@ -261,7 +262,13 @@ const AddTrader = () => {
           />
         </Box>
       )}
-    </Paper>
+      </Paper>
+      {errors[fileType] && (
+        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+          {errors[fileType]}
+        </Typography>
+      )}
+    </Box>
   );
 
   return (

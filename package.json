@@ -12,7 +12,8 @@
     "start": "node server/production.js",
     "start:production": "NODE_ENV=production node start-production.js",
     "dev:local": "npm run dev",
-    "deploy:build": "npm ci && npm run build"
+    "deploy:build": "npm ci && npm run build",
+    "deploy:netlify": "npm run build"
   },
   "dependencies": {
     "react": "^18.2.0",

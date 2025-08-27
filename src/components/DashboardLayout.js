@@ -126,6 +126,29 @@ const DashboardLayout = ({ children }) => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Trader Management System
           </Typography>
+          {currentUser && (
+            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+              <Avatar
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: 'secondary.main',
+                  mr: 1,
+                  fontSize: '0.875rem'
+                }}
+              >
+                {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+              </Avatar>
+              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                  {currentUser.name}
+                </Typography>
+                <Typography variant="caption" sx={{ opacity: 0.8, lineHeight: 1 }}>
+                  {currentUser.email}
+                </Typography>
+              </Box>
+            </Box>
+          )}
           <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
             {isDarkMode ? <Brightness7 /> : <Brightness4 />}
           </IconButton>

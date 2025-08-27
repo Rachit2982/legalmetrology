@@ -36,7 +36,7 @@ const DashboardLayout = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, currentUser } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
 
   const handleDrawerToggle = () => {

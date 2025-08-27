@@ -6,7 +6,8 @@ import {
   Typography,
   Alert,
   IconButton,
-  Paper
+  Paper,
+  Link
 } from '@mui/material';
 import { Visibility, VisibilityOff, Brightness4, Brightness7 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -14,28 +15,35 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  
   const navigate = useNavigate();
   const { login } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-
-    if (!username || !password) {
-      setError('Please enter both username and password');
+    setErrors({});
+    
+    if (!email || !password) {
+      setErrors({ general: 'Please enter both email and password' });
       return;
     }
 
-    const success = login(username, password);
-    if (success) {
+    setLoading(true);
+    
+    const result = login(email, password);
+    
+    setLoading(false);
+    
+    if (result.success) {
       navigate('/dashboard');
     } else {
-      setError('Invalid credentials. Use: admin / admin123');
+      setErrors({ general: result.error });
     }
   };
 
@@ -63,7 +71,7 @@ const Login = () => {
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-            Legal Metrology
+            Login
           </Typography>
           <IconButton onClick={toggleTheme} color="inherit">
             {isDarkMode ? <Brightness7 /> : <Brightness4 />}
@@ -71,24 +79,25 @@ const Login = () => {
         </Box>
         
         <Typography variant="h6" color="text.secondary" sx={{ mb: 4, textAlign: 'center' }}>
-          Trader Management System
+          Legal Metrology Trader Management
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit}>
-          {error && (
+          {errors.general && (
             <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
+              {errors.general}
             </Alert>
           )}
           
           <TextField
             fullWidth
-            label="Username"
+            label="Email Address"
+            type="email"
             variant="outlined"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             sx={{ mb: 2 }}
-            autoComplete="username"
+            autoComplete="email"
           />
           
           <TextField
@@ -117,6 +126,7 @@ const Login = () => {
             fullWidth
             variant="contained"
             size="large"
+            disabled={loading}
             sx={{ 
               mb: 2,
               py: 1.5,
@@ -124,12 +134,21 @@ const Login = () => {
               fontWeight: 'bold'
             }}
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </Button>
           
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              Default credentials: admin / admin123
+              Don't have an account?{' '}
+              <Link
+                component="button"
+                type="button"
+                variant="body2"
+                onClick={() => navigate('/signup')}
+                sx={{ textDecoration: 'none' }}
+              >
+                Sign up here
+              </Link>
             </Typography>
           </Box>
         </Box>

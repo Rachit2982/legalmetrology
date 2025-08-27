@@ -58,14 +58,14 @@ const Dashboard = () => {
     });
 
     setStats({
-      totalTraders: mockTraders.length,
+      totalTraders: userTraders.length,
       expiringSoon: expiringSoon.length,
       expired: expired.length,
       upToDate: upToDate.length
     });
 
     setUpcomingRenewals([...expiringSoon, ...expired].slice(0, 5));
-  }, []);
+  }, [currentUser]);
 
   const StatCard = ({ title, value, color, icon, onClick }) => (
     <Card 

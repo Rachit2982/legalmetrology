@@ -105,9 +105,9 @@ const AddTrader = () => {
         createdAt: new Date().toISOString()
       };
       
-      // Save to localStorage (in real app, this would save to database)
+      // Save to localStorage per user (in real app, this would save to database)
       const updatedTraders = [...existingTraders, newTrader];
-      localStorage.setItem('traders', JSON.stringify(updatedTraders));
+      localStorage.setItem(userTradersKey, JSON.stringify(updatedTraders));
       
       // Save files to localStorage with actual content (in real app, these would be uploaded to server)
       const saveFile = (file, traderId, type) => {

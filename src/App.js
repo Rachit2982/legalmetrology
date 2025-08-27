@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/DashboardLayout';
 import Login from './components/Login';
+import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import AddTrader from './components/AddTrader';
 import TraderTracking from './components/TraderTracking';

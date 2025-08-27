@@ -130,7 +130,8 @@ const TraderTracking = () => {
   const confirmDelete = () => {
     if (deleteDialog.trader) {
       const updatedTraders = traders.filter(t => t.id !== deleteDialog.trader.id);
-      localStorage.setItem('traders', JSON.stringify(updatedTraders));
+      const userTradersKey = `traders_${currentUser?.id || 'default'}`;
+      localStorage.setItem(userTradersKey, JSON.stringify(updatedTraders));
       
       // Remove associated files
       localStorage.removeItem(`file_${deleteDialog.trader.id}_certificate`);

@@ -61,7 +61,7 @@ const ExportData = () => {
           console.error('Error parsing certificate file data:', error);
         }
       }
-
+      
       // Check for indent file
       const indentFileData = localStorage.getItem(`file_${trader.id}_indent`);
       if (indentFileData) {
@@ -94,28 +94,32 @@ const ExportData = () => {
 
   const createExcelFile = () => {
     const excelData = traders.map((trader, index) => {
-      // Get actual file names from stored data
-      let certificateFileName = 'Not uploaded';
-      let indentFileName = 'Not uploaded';
-
+      // Get actual file information from stored data
+      let certificateInfo = 'Not uploaded';
+      let indentInfo = 'Not uploaded';
+      let certificateBase64 = '';
+      let indentBase64 = '';
+      
       const certFileData = localStorage.getItem(`file_${trader.id}_certificate`);
       if (certFileData) {
         try {
           const certData = JSON.parse(certFileData);
           if (certData.content && certData.name) {
-            certificateFileName = `./files/${trader.id}_certificate_${certData.name}`;
+            certificateInfo = `${certData.name} (${formatFileSize(certData.size)})`;
+            certificateBase64 = certData.content;
           }
         } catch (error) {
           console.error('Error parsing certificate file data:', error);
         }
       }
-
+      
       const indentFileData = localStorage.getItem(`file_${trader.id}_indent`);
       if (indentFileData) {
         try {
           const indentData = JSON.parse(indentFileData);
           if (indentData.content && indentData.name) {
-            indentFileName = `./files/${trader.id}_indent_${indentData.name}`;
+            indentInfo = `${indentData.name} (${formatFileSize(indentData.size)})`;
+            indentBase64 = indentData.content;
           }
         } catch (error) {
           console.error('Error parsing indent file data:', error);
@@ -124,23 +128,33 @@ const ExportData = () => {
 
       return {
         'S.No': index + 1,
-        'Trader ID': trader.traderId,
-        'Challan Number': trader.challanNumber,
-        'Trader Name': trader.name,
-        'Fee Amount (₹)': trader.feeAmount,
-        'Subscription Period (Years)': trader.subscriptionPeriod,
-        'Fee Submission Date': dayjs(trader.feeSubmissionDate).format('DD/MM/YYYY'),
-        'Re-verification Date': dayjs(trader.reVerificationDate).format('DD/MM/YYYY'),
-        'Days Until Re-verification': dayjs(trader.reVerificationDate).diff(dayjs(), 'day'),
-        'Certificate File': certificateFileName,
-        'Indent File': indentFileName,
+        'Trader ID': trader.traderId || '',
+        'Number of Items': trader.numberOfItems || '',
+        'Indent/Certificate No.': trader.indentCertificateNo || '',
+        'Beam Scale': trader.beamScale || '',
+        'Iron Weight Hexagonal': trader.ironWeightHexagonal || '',
+        'Meter/Map': trader.meterMap || '',
+        'Counter': trader.counter || '',
+        'Bullion': trader.bullion || '',
+        'E.W.M.': trader.ewm || '',
+        'Total No. of Items': trader.totalNoOfItems || '',
+        'Fee Amount (₹)': trader.feeAmount || '',
+        'Subscription Period (Years)': trader.subscriptionPeriod || '',
+        'Fee Submission Date': trader.feeSubmissionDate ? dayjs(trader.feeSubmissionDate).format('DD/MM/YYYY') : '',
+        'Re-verification Date': trader.reVerificationDate ? dayjs(trader.reVerificationDate).format('DD/MM/YYYY') : '',
+        'Days Until Re-verification': trader.reVerificationDate ? dayjs(trader.reVerificationDate).diff(dayjs(), 'day') : '',
+        'Certificate File': certificateInfo,
+        'Certificate Data': certificateBase64 ? 'PDF_DATA_EMBEDDED' : 'No file',
+        'Indent File': indentInfo,
+        'Indent Data': indentBase64 ? 'PDF_DATA_EMBEDDED' : 'No file',
         'Status': (() => {
+          if (!trader.reVerificationDate) return 'Unknown';
           const daysUntil = dayjs(trader.reVerificationDate).diff(dayjs(), 'day');
           if (daysUntil < 0) return 'Expired';
           if (daysUntil <= 30) return 'Expiring Soon';
           return 'Active';
         })(),
-        'Created Date': dayjs(trader.createdAt).format('DD/MM/YYYY HH:mm')
+        'Created Date': trader.createdAt ? dayjs(trader.createdAt).format('DD/MM/YYYY HH:mm') : ''
       };
     });
 
@@ -150,15 +164,24 @@ const ExportData = () => {
     const colWidths = [
       { wch: 8 },   // S.No
       { wch: 15 },  // Trader ID
-      { wch: 20 },  // Challan Number
-      { wch: 25 },  // Trader Name
+      { wch: 12 },  // Number of Items
+      { wch: 20 },  // Indent/Certificate No.
+      { wch: 15 },  // Beam Scale
+      { wch: 18 },  // Iron Weight Hexagonal
+      { wch: 15 },  // Meter/Map
+      { wch: 12 },  // Counter
+      { wch: 12 },  // Bullion
+      { wch: 12 },  // E.W.M.
+      { wch: 15 },  // Total No. of Items
       { wch: 15 },  // Fee Amount
       { wch: 12 },  // Subscription Period
       { wch: 18 },  // Fee Submission Date
       { wch: 18 },  // Re-verification Date
       { wch: 20 },  // Days Until Re-verification
       { wch: 30 },  // Certificate File
+      { wch: 20 },  // Certificate Data
       { wch: 30 },  // Indent File
+      { wch: 20 },  // Indent Data
       { wch: 15 },  // Status
       { wch: 20 }   // Created Date
     ];
@@ -178,23 +201,88 @@ const ExportData = () => {
       ['Data Size:', formatFileSize(stats.dataSize)],
       [''],
       ['Status Summary:'],
-      ['Active Traders:', traders.filter(t => dayjs(t.reVerificationDate).diff(dayjs(), 'day') > 30).length],
+      ['Active Traders:', traders.filter(t => {
+        if (!t.reVerificationDate) return false;
+        return dayjs(t.reVerificationDate).diff(dayjs(), 'day') > 30;
+      }).length],
       ['Expiring Soon:', traders.filter(t => {
+        if (!t.reVerificationDate) return false;
         const days = dayjs(t.reVerificationDate).diff(dayjs(), 'day');
         return days >= 0 && days <= 30;
       }).length],
-      ['Expired:', traders.filter(t => dayjs(t.reVerificationDate).diff(dayjs(), 'day') < 0).length],
+      ['Expired:', traders.filter(t => {
+        if (!t.reVerificationDate) return false;
+        return dayjs(t.reVerificationDate).diff(dayjs(), 'day') < 0;
+      }).length],
       [''],
-      ['Instructions:'],
-      ['1. Extract the ZIP file to access all data'],
-      ['2. Open the Excel file to view trader information'],
-      ['3. Click on file links in Excel to open associated documents'],
-      ['4. All files are organized in the "files" folder']
+      ['New Fields Added:'],
+      ['- Number of Items'],
+      ['- Indent/Calibration Certificate No.'],
+      ['- Beam Scale'],
+      ['- Iron Weight Hexagonal'],
+      ['- Meter/Map'],
+      ['- Counter'],
+      ['- Bullion'],
+      ['- E.W.M.'],
+      ['- Total No. of Items'],
+      [''],
+      ['PDF File Information:'],
+      ['- Certificate Data and Indent Data columns contain embedded PDF information'],
+      ['- Actual PDF files are also included in the ZIP package for easy access'],
+      ['- Files can be opened directly from the "files" folder in the ZIP']
     ];
 
     const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
-    summarySheet['!cols'] = [{ wch: 40 }, { wch: 20 }];
+    summarySheet['!cols'] = [{ wch: 50 }, { wch: 20 }];
     XLSX.utils.book_append_sheet(workbook, summarySheet, 'Export Summary');
+
+    // Add PDF Data sheet with base64 content
+    const pdfDataSheet = [];
+    pdfDataSheet.push(['Trader ID', 'File Type', 'File Name', 'Base64 Content']);
+    
+    traders.forEach(trader => {
+      // Add certificate data
+      const certFileData = localStorage.getItem(`file_${trader.id}_certificate`);
+      if (certFileData) {
+        try {
+          const certData = JSON.parse(certFileData);
+          if (certData.content) {
+            pdfDataSheet.push([
+              trader.traderId,
+              'Certificate',
+              certData.name,
+              certData.content
+            ]);
+          }
+        } catch (error) {
+          console.error('Error processing certificate:', error);
+        }
+      }
+      
+      // Add indent data
+      const indentFileData = localStorage.getItem(`file_${trader.id}_indent`);
+      if (indentFileData) {
+        try {
+          const indentData = JSON.parse(indentFileData);
+          if (indentData.content) {
+            pdfDataSheet.push([
+              trader.traderId,
+              'Indent',
+              indentData.name,
+              indentData.content
+            ]);
+          }
+        } catch (error) {
+          console.error('Error processing indent:', error);
+        }
+      }
+    });
+
+    if (pdfDataSheet.length > 1) {
+      const pdfSheet = XLSX.utils.aoa_to_sheet(pdfDataSheet);
+      pdfSheet['!cols'] = [{ wch: 15 }, { wch: 15 }, { wch: 30 }, { wch: 100 }];
+      XLSX.utils.book_append_sheet(workbook, pdfSheet, 'PDF Data (Base64)');
+    }
 
     return XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
   };
@@ -205,18 +293,18 @@ const ExportData = () => {
     try {
       const zip = new JSZip();
       
-      // Create Excel file
+      // Create Excel file with embedded PDF data
       const excelData = createExcelFile();
-      zip.file('Legal_Metrology_Traders_Data.xlsx', excelData);
+      zip.file('Legal_Metrology_Traders_Complete_Data.xlsx', excelData);
       
-      // Create files folder
+      // Create files folder for actual PDF files
       const filesFolder = zip.folder('files');
       
       // Add trader files to zip
       for (const trader of traders) {
         // Add certificate file if exists
         const certFileData = localStorage.getItem(`file_${trader.id}_certificate`);
-        if (certFileData && trader.certificateFile) {
+        if (certFileData) {
           try {
             const fileInfo = JSON.parse(certFileData);
             if (fileInfo.content) {
@@ -227,16 +315,16 @@ const ExportData = () => {
               for (let i = 0; i < binaryData.length; i++) {
                 bytes[i] = binaryData.charCodeAt(i);
               }
-              filesFolder.file(`${trader.id}_certificate_${fileInfo.name}`, bytes);
+              filesFolder.file(`${trader.traderId}_certificate_${fileInfo.name}`, bytes);
             }
           } catch (error) {
             console.error('Error processing certificate file:', error);
           }
         }
-
+        
         // Add indent file if exists
         const indentFileData = localStorage.getItem(`file_${trader.id}_indent`);
-        if (indentFileData && trader.indentFile) {
+        if (indentFileData) {
           try {
             const fileInfo = JSON.parse(indentFileData);
             if (fileInfo.content) {
@@ -247,7 +335,7 @@ const ExportData = () => {
               for (let i = 0; i < binaryData.length; i++) {
                 bytes[i] = binaryData.charCodeAt(i);
               }
-              filesFolder.file(`${trader.id}_indent_${fileInfo.name}`, bytes);
+              filesFolder.file(`${trader.traderId}_indent_${fileInfo.name}`, bytes);
             }
           } catch (error) {
             console.error('Error processing indent file:', error);
@@ -255,30 +343,65 @@ const ExportData = () => {
         }
       }
       
-      // Add readme file
-      zip.file('README.txt', `Legal Metrology Trader Management System - Data Export
-      
+      // Add comprehensive readme file
+      zip.file('README.txt', `Legal Metrology Trader Management System - Complete Data Export
+
 Export Date: ${dayjs().format('DD/MM/YYYY HH:mm')}
 Total Traders: ${traders.length}
 Total Files: ${stats.totalFiles}
+Data Size: ${formatFileSize(stats.dataSize)}
 
 CONTENTS:
-- Legal_Metrology_Traders_Data.xlsx: Complete trader database with hyperlinks to files
-- files/: Folder containing all uploaded certificates and indents
-- README.txt: This file
+========
+- Legal_Metrology_Traders_Complete_Data.xlsx: Complete database with ALL trader information
+- files/: Folder containing all uploaded PDF certificates and indents
+- README.txt: This instruction file
+
+EXCEL FILE STRUCTURE:
+====================
+Sheet 1: "Traders Data" - Main data with all fields including:
+  • Basic Information (Trader ID, Items, Certificate No.)
+  • Equipment Details (Beam Scale, Iron Weight, Meter/Map, Counter, Bullion, E.W.M.)
+  • Dates and Status Information
+  • File Information with embedded data indicators
+
+Sheet 2: "Export Summary" - Overview and statistics
+Sheet 3: "PDF Data (Base64)" - Raw PDF file data in base64 format for programmatic access
+
+NEW FIELDS INCLUDED:
+===================
+✓ Number of Items
+✓ Indent/Calibration Certificate No.
+✓ Beam Scale
+✓ Iron Weight Hexagonal
+✓ Meter/Map
+✓ Counter
+✓ Bullion
+✓ E.W.M.
+✓ Total No. of Items
+
+PDF FILE HANDLING:
+=================
+- PDFs are embedded as base64 data in the Excel file
+- Original PDF files are also included in the "files" folder
+- Each trader's files are named with their Trader ID for easy identification
+- Both certificate and indent files are preserved with original names
 
 INSTRUCTIONS:
+============
 1. Open the Excel file to view all trader information
-2. Click on file links in the Certificate File and Indent File columns to open associated documents
-3. All uploaded files are organized in the "files" folder
-4. The Export Summary sheet contains an overview of the data
+2. The "PDF Data (Base64)" sheet contains raw file data for advanced users
+3. Physical PDF files can be accessed from the "files" folder
+4. File names follow the pattern: [TraderID]_[type]_[originalname]
 
-NOTES:
-- File links in Excel are relative paths to the files folder
-- Ensure the folder structure is maintained for proper file access
-- This export contains all trader data as of the export date
+AUTHENTICATION NOTES:
+====================
+- This system now uses email-based authentication
+- Each user's data is associated with their account
+- Default admin credentials have been removed for security
 
-Generated by Legal Metrology Trader Management System`);
+Generated by Legal Metrology Trader Management System v2.0
+Developed with enhanced security and comprehensive data management`);
       
       // Generate and download ZIP file
       const zipData = await zip.generateAsync({ type: 'blob' });
@@ -287,7 +410,7 @@ Generated by Legal Metrology Trader Management System`);
       const url = URL.createObjectURL(zipData);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `Legal_Metrology_Export_${dayjs().format('YYYY-MM-DD_HH-mm')}.zip`;
+      link.download = `Legal_Metrology_Complete_Export_${dayjs().format('YYYY-MM-DD_HH-mm')}.zip`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -304,7 +427,7 @@ Generated by Legal Metrology Trader Management System`);
   return (
     <Box>
       <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-        Export Data
+        Export Complete Data
       </Typography>
 
       <Grid container spacing={3}>
@@ -332,7 +455,7 @@ Generated by Legal Metrology Trader Management System`);
                       {stats.totalFiles}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Uploaded Files
+                      PDF Files
                     </Typography>
                   </Paper>
                 </Grid>
@@ -348,9 +471,9 @@ Generated by Legal Metrology Trader Management System`);
                 </Grid>
               </Grid>
 
-              <Alert severity="info" sx={{ mb: 3 }}>
-                The export will include all trader data in Excel format with hyperlinks to uploaded files. 
-                Everything will be packaged in a convenient ZIP file for easy sharing and backup.
+              <Alert severity="success" sx={{ mb: 3 }}>
+                <strong>Enhanced Export Features:</strong> PDFs are now embedded directly in Excel with base64 encoding, 
+                plus original files are included in the ZIP for maximum compatibility and accessibility.
               </Alert>
 
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -363,8 +486,8 @@ Generated by Legal Metrology Trader Management System`);
                     <TableChart color="primary" />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Excel Spreadsheet"
-                    secondary="Complete trader database with all fields and calculated status information"
+                    primary="Complete Excel Database"
+                    secondary="All trader fields including new equipment details (Beam Scale, Iron Weight, etc.) with embedded PDF data"
                   />
                 </ListItem>
                 <ListItem>
@@ -372,8 +495,8 @@ Generated by Legal Metrology Trader Management System`);
                     <Folder color="success" />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Uploaded Files"
-                    secondary="All certificates and indents organized in a files folder"
+                    primary="Original PDF Files"
+                    secondary="All certificates and indents in their original format in a separate files folder"
                   />
                 </ListItem>
                 <ListItem>
@@ -381,8 +504,8 @@ Generated by Legal Metrology Trader Management System`);
                     <Info color="info" />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Documentation"
-                    secondary="README file with instructions and export summary"
+                    primary="Base64 PDF Data Sheet"
+                    secondary="Raw PDF data embedded in Excel for programmatic access and data recovery"
                   />
                 </ListItem>
               </List>
@@ -398,14 +521,14 @@ Generated by Legal Metrology Trader Management System`);
                   disabled={exporting || traders.length === 0}
                   sx={{ px: 4, py: 1.5 }}
                 >
-                  {exporting ? 'Preparing Export...' : 'Export All Data'}
+                  {exporting ? 'Creating Complete Export...' : 'Export Complete Data Package'}
                 </Button>
                 
                 {exporting && (
                   <Box sx={{ mt: 2 }}>
                     <LinearProgress />
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                      Creating ZIP file with Excel data and uploaded files...
+                      Creating comprehensive ZIP with Excel data, embedded PDFs, and original files...
                     </Typography>
                   </Box>
                 )}
@@ -434,7 +557,7 @@ Generated by Legal Metrology Trader Management System`);
                   </ListItemIcon>
                   <ListItemText
                     primary="Step 1"
-                    secondary="Click 'Export All Data' button"
+                    secondary="Click 'Export Complete Data Package' button"
                   />
                 </ListItem>
                 <ListItem>
@@ -452,7 +575,7 @@ Generated by Legal Metrology Trader Management System`);
                   </ListItemIcon>
                   <ListItemText
                     primary="Step 3"
-                    secondary="Extract the ZIP file contents"
+                    secondary="Extract ZIP to access Excel + PDF files"
                   />
                 </ListItem>
                 <ListItem>
@@ -461,14 +584,15 @@ Generated by Legal Metrology Trader Management System`);
                   </ListItemIcon>
                   <ListItemText
                     primary="Step 4"
-                    secondary="Open Excel file to view data with file links"
+                    secondary="Open Excel to view all data with embedded PDF info"
                   />
                 </ListItem>
               </List>
 
-              <Alert severity="warning" sx={{ mt: 2 }}>
+              <Alert severity="info" sx={{ mt: 2 }}>
                 <Typography variant="body2">
-                  Keep the folder structure intact to ensure file links in Excel work properly.
+                  <strong>New Features:</strong> All new form fields are included, PDFs are embedded in Excel, 
+                  and separate authentication means each user only sees their own data.
                 </Typography>
               </Alert>
             </CardContent>

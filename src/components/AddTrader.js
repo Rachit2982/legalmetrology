@@ -84,8 +84,9 @@ const AddTrader = () => {
     if (!validateForm()) return;
     
     try {
-      // Get existing traders from localStorage
-      const existingTraders = JSON.parse(localStorage.getItem('traders') || '[]');
+      // Get existing traders from localStorage for current user
+      const userTradersKey = `traders_${currentUser?.id || 'default'}`;
+      const existingTraders = JSON.parse(localStorage.getItem(userTradersKey) || '[]');
       
       // Check for duplicate trader ID
       if (existingTraders.some(trader => trader.traderId === formData.traderId)) {

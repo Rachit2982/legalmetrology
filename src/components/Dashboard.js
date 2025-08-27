@@ -40,18 +40,18 @@ const Dashboard = () => {
     const userTraders = JSON.parse(localStorage.getItem(userTradersKey) || '[]');
     const today = dayjs();
     
-    const expiringSoon = mockTraders.filter(trader => {
+    const expiringSoon = userTraders.filter(trader => {
       const reVerificationDate = dayjs(trader.reVerificationDate);
       const daysUntilExpiry = reVerificationDate.diff(today, 'day');
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
     });
 
-    const expired = mockTraders.filter(trader => {
+    const expired = userTraders.filter(trader => {
       const reVerificationDate = dayjs(trader.reVerificationDate);
       return reVerificationDate.isBefore(today);
     });
 
-    const upToDate = mockTraders.filter(trader => {
+    const upToDate = userTraders.filter(trader => {
       const reVerificationDate = dayjs(trader.reVerificationDate);
       const daysUntilExpiry = reVerificationDate.diff(today, 'day');
       return daysUntilExpiry > 30;

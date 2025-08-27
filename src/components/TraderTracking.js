@@ -47,7 +47,7 @@ const TraderTracking = () => {
 
   useEffect(() => {
     loadTraders();
-  }, []);
+  }, [currentUser]);
 
   useEffect(() => {
     filterTraders();

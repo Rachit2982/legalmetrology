@@ -18,8 +18,10 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Upload, Delete, FilePresent } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import { useAuth } from '../context/AuthContext';
 
 const AddTrader = () => {
+  const { currentUser } = useAuth();
   const [formData, setFormData] = useState({
     traderId: '2575TRD', // Default trader ID as requested
     numberOfItems: '',

@@ -54,7 +54,8 @@ const TraderTracking = () => {
   }, [traders, searchTerm, statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadTraders = () => {
-    const savedTraders = JSON.parse(localStorage.getItem('traders') || '[]');
+    const userTradersKey = `traders_${currentUser?.id || 'default'}`;
+    const savedTraders = JSON.parse(localStorage.getItem(userTradersKey) || '[]');
     setTraders(savedTraders);
   };
 

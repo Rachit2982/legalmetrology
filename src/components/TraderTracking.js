@@ -35,8 +35,10 @@ import {
   InsertDriveFile
 } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import { useAuth } from '../context/AuthContext';
 
 const TraderTracking = () => {
+  const { currentUser } = useAuth();
   const [traders, setTraders] = useState([]);
   const [filteredTraders, setFilteredTraders] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

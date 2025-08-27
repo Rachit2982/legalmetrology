@@ -35,8 +35,9 @@ const Dashboard = () => {
   const [upcomingRenewals, setUpcomingRenewals] = useState([]);
 
   useEffect(() => {
-    // Mock data - in real app, this would fetch from database
-    const mockTraders = JSON.parse(localStorage.getItem('traders') || '[]');
+    // Load user-specific data - in real app, this would fetch from database
+    const userTradersKey = `traders_${currentUser?.id || 'default'}`;
+    const userTraders = JSON.parse(localStorage.getItem(userTradersKey) || '[]');
     const today = dayjs();
     
     const expiringSoon = mockTraders.filter(trader => {

@@ -63,6 +63,27 @@ html {
   animation: pulse 2s infinite;
 }
 
+/* Smooth slide-in animation for page transitions */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Navigation transition effects */
+.MuiListItemButton-root {
+  transition: all 0.2s ease-in-out !important;
+}
+
+.MuiDrawer-paper {
+  transition: transform 0.3s ease-in-out !important;
+}
+
 /* Print styles */
 @media print {
   .no-print {

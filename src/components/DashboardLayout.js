@@ -196,7 +196,11 @@ const DashboardLayout = ({ children }) => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: 8
+          mt: 8,
+          transition: 'all 0.3s ease-in-out',
+          '& > *': {
+            animation: 'slideIn 0.4s ease-out'
+          }
         }}
       >
         {children}

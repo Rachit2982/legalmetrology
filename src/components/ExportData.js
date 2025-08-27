@@ -25,8 +25,10 @@ import {
 import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import dayjs from 'dayjs';
+import { useAuth } from '../context/AuthContext';
 
 const ExportData = () => {
+  const { currentUser } = useAuth();
   const [traders, setTraders] = useState([]);
   const [exporting, setExporting] = useState(false);
   const [stats, setStats] = useState({

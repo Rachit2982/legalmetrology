@@ -21,9 +21,11 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [stats, setStats] = useState({
     totalTraders: 0,
     expiringSoon: 0,

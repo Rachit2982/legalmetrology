@@ -39,7 +39,7 @@ const ExportData = () => {
 
   useEffect(() => {
     loadTraders();
-  }, []);
+  }, [currentUser]);
 
   const loadTraders = () => {
     const userTradersKey = `traders_${currentUser?.id || 'default'}`;

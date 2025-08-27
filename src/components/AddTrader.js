@@ -21,13 +21,20 @@ import dayjs from 'dayjs';
 
 const AddTrader = () => {
   const [formData, setFormData] = useState({
-    traderId: '',
-    challanNumber: '',
-    name: '',
-    feeAmount: '',
-    subscriptionPeriod: 1,
+    traderId: '2575TRD', // Default trader ID as requested
+    numberOfItems: '',
+    indentCertificateNo: '',
+    beamScale: '',
+    ironWeightHexagonal: '',
+    meterMap: '',
+    counter: '',
+    bullion: '',
+    ewm: '', // E.W.M. field
+    totalNoOfItems: '',
     feeSubmissionDate: dayjs(),
-    reVerificationDate: dayjs().add(1, 'year')
+    reVerificationDate: dayjs(), // Not linked to submission date anymore
+    feeAmount: '',
+    subscriptionPeriod: 1
   });
   
   const [files, setFiles] = useState({
@@ -44,18 +51,7 @@ const AddTrader = () => {
       [field]: value
     }));
     
-    // Auto-calculate re-verification date based on subscription period and fee submission date
-    if (field === 'subscriptionPeriod' || field === 'feeSubmissionDate') {
-      const submissionDate = field === 'feeSubmissionDate' ? value : formData.feeSubmissionDate;
-      const period = field === 'subscriptionPeriod' ? value : formData.subscriptionPeriod;
-      
-      if (submissionDate && period) {
-        setFormData(prev => ({
-          ...prev,
-          reVerificationDate: submissionDate.add(period, 'year')
-        }));
-      }
-    }
+    // Remove auto-calculation as requested - dates are now independent
     
     // Clear error when user starts typing
     if (errors[field]) {
@@ -70,10 +66,10 @@ const AddTrader = () => {
     const newErrors = {};
     
     if (!formData.traderId) newErrors.traderId = 'Trader ID is required';
-    if (!formData.challanNumber) newErrors.challanNumber = 'Challan Number is required';
-    if (!formData.name) newErrors.name = 'Trader Name is required';
-    if (!formData.feeAmount || formData.feeAmount <= 0) newErrors.feeAmount = 'Valid fee amount is required';
+    if (!formData.indentCertificateNo) newErrors.indentCertificateNo = 'Indent/Certificate No. is required';
+    if (!formData.numberOfItems || formData.numberOfItems <= 0) newErrors.numberOfItems = 'Valid number of items is required';
     if (!formData.feeSubmissionDate) newErrors.feeSubmissionDate = 'Fee submission date is required';
+    if (!formData.reVerificationDate) newErrors.reVerificationDate = 'Re-verification date is required';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -82,9 +78,9 @@ const AddTrader = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess('');
-
+    
     if (!validateForm()) return;
-
+    
     try {
       // Get existing traders from localStorage
       const existingTraders = JSON.parse(localStorage.getItem('traders') || '[]');
@@ -142,15 +138,22 @@ const AddTrader = () => {
       
       setSuccess('Trader added successfully!');
       
-      // Reset form
+      // Reset form but keep default trader ID
       setFormData({
-        traderId: '',
-        challanNumber: '',
-        name: '',
-        feeAmount: '',
-        subscriptionPeriod: 1,
+        traderId: '2575TRD',
+        numberOfItems: '',
+        indentCertificateNo: '',
+        beamScale: '',
+        ironWeightHexagonal: '',
+        meterMap: '',
+        counter: '',
+        bullion: '',
+        ewm: '',
+        totalNoOfItems: '',
         feeSubmissionDate: dayjs(),
-        reVerificationDate: dayjs().add(1, 'year')
+        reVerificationDate: dayjs(),
+        feeAmount: '',
+        subscriptionPeriod: 1
       });
       setFiles({ certificate: null, indent: null });
       
@@ -218,50 +221,50 @@ const AddTrader = () => {
           }
         }}
       >
-      {files[fileType] ? (
-        <Box>
-          <FilePresent sx={{ fontSize: 48, color: 'success.main', mb: 1 }} />
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            {files[fileType].name}
-          </Typography>
-          <Chip
-            label={`${(files[fileType].size / 1024).toFixed(1)} KB`}
-            size="small"
-            color="success"
-          />
-          <IconButton
-            size="small"
-            onClick={() => removeFile(fileType)}
-            sx={{ ml: 1 }}
-          >
-            <Delete />
-          </IconButton>
-        </Box>
-      ) : (
-        <Box>
-          <Upload sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            Click to upload {label}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Supports: PDF, DOC, DOCX, JPG, PNG
-          </Typography>
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-            onChange={(e) => handleFileChange(fileType, e)}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0,
-              cursor: 'pointer'
-            }}
-          />
-        </Box>
-      )}
+        {files[fileType] ? (
+          <Box>
+            <FilePresent sx={{ fontSize: 48, color: 'success.main', mb: 1 }} />
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              {files[fileType].name}
+            </Typography>
+            <Chip
+              label={`${(files[fileType].size / 1024).toFixed(1)} KB`}
+              size="small"
+              color="success"
+            />
+            <IconButton
+              size="small"
+              onClick={() => removeFile(fileType)}
+              sx={{ ml: 1 }}
+            >
+              <Delete />
+            </IconButton>
+          </Box>
+        ) : (
+          <Box>
+            <Upload sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
+            <Typography variant="body1" sx={{ mb: 1 }}>
+              Click to upload {label}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Supports: PDF, DOC, DOCX, JPG, PNG
+            </Typography>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              onChange={(e) => handleFileChange(fileType, e)}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                opacity: 0,
+                cursor: 'pointer'
+              }}
+            />
+          </Box>
+        )}
       </Paper>
       {errors[fileType] && (
         <Typography variant="body2" color="error" sx={{ mt: 1 }}>
@@ -311,48 +314,101 @@ const AddTrader = () => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Challan Number *"
-                    value={formData.challanNumber}
-                    onChange={(e) => handleInputChange('challanNumber', e.target.value)}
-                    error={!!errors.challanNumber}
-                    helperText={errors.challanNumber}
+                    label="Number of Items *"
+                    type="number"
+                    value={formData.numberOfItems}
+                    onChange={(e) => handleInputChange('numberOfItems', parseInt(e.target.value) || '')}
+                    error={!!errors.numberOfItems}
+                    helperText={errors.numberOfItems}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Trader Name *"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    error={!!errors.name}
-                    helperText={errors.name}
+                    label="Indent/Calibration Certificate No. *"
+                    value={formData.indentCertificateNo}
+                    onChange={(e) => handleInputChange('indentCertificateNo', e.target.value)}
+                    error={!!errors.indentCertificateNo}
+                    helperText={errors.indentCertificateNo}
+                  />
+                </Grid>
+              </Grid>
+
+              <Divider sx={{ my: 4 }} />
+
+              <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold' }}>
+                Equipment Details
+              </Typography>
+
+              <Grid container spacing={3} sx={{ mb: 4 }}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Beam Scale"
+                    value={formData.beamScale}
+                    onChange={(e) => handleInputChange('beamScale', e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Fee Amount *"
+                    label="Iron Weight Hexagonal"
+                    value={formData.ironWeightHexagonal}
+                    onChange={(e) => handleInputChange('ironWeightHexagonal', e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Meter/Map"
+                    value={formData.meterMap}
+                    onChange={(e) => handleInputChange('meterMap', e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Counter"
+                    value={formData.counter}
+                    onChange={(e) => handleInputChange('counter', e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Bullion"
+                    value={formData.bullion}
+                    onChange={(e) => handleInputChange('bullion', e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="E.W.M."
+                    value={formData.ewm}
+                    onChange={(e) => handleInputChange('ewm', e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Total No. of Items"
+                    type="number"
+                    value={formData.totalNoOfItems}
+                    onChange={(e) => handleInputChange('totalNoOfItems', parseInt(e.target.value) || '')}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Fee Amount"
                     type="number"
                     value={formData.feeAmount}
                     onChange={(e) => handleInputChange('feeAmount', parseFloat(e.target.value) || '')}
-                    error={!!errors.feeAmount}
-                    helperText={errors.feeAmount}
                     InputProps={{
                       startAdornment: '₹'
                     }}
                   />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Subscription Period *"
-                    value={formData.subscriptionPeriod}
-                    onChange={(e) => handleInputChange('subscriptionPeriod', parseInt(e.target.value))}
-                  >
-                    <MenuItem value={1}>1 Year</MenuItem>
-                    <MenuItem value={2}>2 Years</MenuItem>
-                  </TextField>
                 </Grid>
               </Grid>
 
@@ -380,21 +436,30 @@ const AddTrader = () => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <DatePicker
-                    label="Re-verification Date"
+                    label="Re-verification Date *"
                     value={formData.reVerificationDate}
                     onChange={(value) => handleInputChange('reVerificationDate', value)}
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         fullWidth
-                        InputProps={{
-                          ...params.InputProps,
-                          readOnly: true
-                        }}
-                        helperText="Auto-calculated based on subscription period"
+                        error={!!errors.reVerificationDate}
+                        helperText={errors.reVerificationDate || "Independent date - not auto-calculated"}
                       />
                     )}
                   />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Subscription Period"
+                    value={formData.subscriptionPeriod}
+                    onChange={(e) => handleInputChange('subscriptionPeriod', parseInt(e.target.value))}
+                  >
+                    <MenuItem value={1}>1 Year</MenuItem>
+                    <MenuItem value={2}>2 Years</MenuItem>
+                  </TextField>
                 </Grid>
               </Grid>
 
@@ -429,13 +494,20 @@ const AddTrader = () => {
                   variant="outlined"
                   onClick={() => {
                     setFormData({
-                      traderId: '',
-                      challanNumber: '',
-                      name: '',
-                      feeAmount: '',
-                      subscriptionPeriod: 1,
+                      traderId: '2575TRD',
+                      numberOfItems: '',
+                      indentCertificateNo: '',
+                      beamScale: '',
+                      ironWeightHexagonal: '',
+                      meterMap: '',
+                      counter: '',
+                      bullion: '',
+                      ewm: '',
+                      totalNoOfItems: '',
                       feeSubmissionDate: dayjs(),
-                      reVerificationDate: dayjs().add(1, 'year')
+                      reVerificationDate: dayjs(),
+                      feeAmount: '',
+                      subscriptionPeriod: 1
                     });
                     setFiles({ certificate: null, indent: null });
                     setErrors({});
